@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Löning.nu</title>
+    <style>
+      html {
+        font-size: 19px;
+      }
+
+      body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background: #121212;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: rgba(255, 255, 255, .87);
+        text-align: center;
+      }
+
+      h1 {
+        font-weight: normal;
+        letter-spacing: .05em;
+        font-size: 2em;
+      }
+
+      #timer {
+        font-weight: bold;
+        border-radius: 6px;
+        letter-spacing: .02em;
+        font-size: 2.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Nästa lön kommer om</h1>
+    <div id="timer"></div>
+
+    <script>
+      // Public holidays in Sweden 2023.
+      const publicHolidays = [
+        "2023-01-01",
+        "2023-01-06",
+        "2023-04-07",
+        "2023-04-09",
+        "2023-04-10",
+        "2023-05-01",
+        "2023-05-18",
+        "2023-05-27",
+        "2023-06-06",
+        "2023-12-24",
+        "2023-12-25",
+        "2023-12-26",
+        "2023-12-31",
+      ];
+
+      function calculateNextPayDay() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+
+        if (now.getDate() > 25) {
+          month++;
+          if (month === 12) {
+            month = 0;
+            year++;
+          }
+        }
+
+        let nextPayDay = new Date(year, month, 25);
+
+        // Check if 25th is a weekend or public holiday. If yes, return the closest previous working day.
+        while (
+          nextPayDay.getDay() === 0 ||
+          nextPayDay.getDay() === 6 ||
+          publicHolidays.includes(nextPayDay.toISOString().split("T")[0])
+        ) {
+          nextPayDay.setDate(nextPayDay.getDate() - 1);
+        }
+
+        return nextPayDay;
+      }
+
+      function updateCountdown(el) {
+          const now = new Date().getTime();
+          const nextPayDay = calculateNextPayDay().getTime();
+
+          const delta = nextPayDay - now;
+
+          const days = Math.floor(delta / (1000 * 60 * 60 * 24));
+          const hours = Math.floor(
+            (delta % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const minutes = Math.floor((delta % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((delta % (1000 * 60)) / 1000);
+
+          el.innerHTML =
+            days + "&nbsp;dagar " + hours + "&nbsp;timmar " + minutes + "&nbsp;minuter och " + seconds + "&nbsp;sekunder";
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+          const el = document.getElementById("timer");
+          updateCountdown(el)
+          setInterval(() => updateCountdown(el), 1000)
+      })
+    </script>
+  </body>
+</html>
