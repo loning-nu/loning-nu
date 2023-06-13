@@ -95,7 +95,7 @@
         while (
           nextPayDay.getDay() === 0 ||
           nextPayDay.getDay() === 6 ||
-          publicHolidays.includes(nextPayDay.toISOString().split('T')[0])
+          publicHolidays.includes(nextPayDay.toLocaleDateString())
         ) {
           nextPayDay.setDate(nextPayDay.getDate() - 1);
         }
