@@ -78,8 +78,8 @@
 
       function calculateNextPayDay() {
         const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth();
+        let year = now.getFullYear();
+        let month = now.getMonth();
 
         if (now.getDate() > 25) {
           month++;
